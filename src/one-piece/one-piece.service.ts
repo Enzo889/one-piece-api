@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOnePieceDto } from './dto/create-one-piece.dto';
 import { UpdateOnePieceDto } from './dto/update-one-piece.dto';
+import { Model } from 'mongoose';
+import { OnePiece } from './entities/one-piece.entity';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class OnePieceService {
-  create(createOnePieceDto: CreateOnePieceDto) {
-    return 'This action adds a new onePiece';
+  constructor(
+    @InjectModel(OnePiece.name)
+    private readonly OnepieceModel: Model<OnePiece>,
+  ) {}
+
+  async create(createOnePieceDto: CreateOnePieceDto) {
+    createOnePieceDto.name = createOnePieceDto.name.toLocaleLowerCase();
+
+    const onepiece = await this.OnepieceModel.create(createOnePieceDto);
+    return onepiece;
   }
 
   findAll() {
