@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateOnePieceDto } from './dto/create-one-piece.dto';
 import { UpdateOnePieceDto } from './dto/update-one-piece.dto';
 import { Model } from 'mongoose';
@@ -15,8 +20,21 @@ export class OnePieceService {
   async create(createOnePieceDto: CreateOnePieceDto) {
     createOnePieceDto.name = createOnePieceDto.name.toLocaleLowerCase();
 
-    const onepiece = await this.OnepieceModel.create(createOnePieceDto);
-    return onepiece;
+    try {
+      const onepiece = await this.OnepieceModel.create(createOnePieceDto);
+      return onepiece;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new BadRequestException(
+          `already exists in DB ${JSON.stringify(error.keyValue)}`,
+        );
+      } else {
+        console.log(error);
+        throw new InternalServerErrorException(
+          'Cannot create OnePiece character in db',
+        );
+      }
+    }
   }
 
   findAll() {
