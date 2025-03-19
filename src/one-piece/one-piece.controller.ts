@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { OnePieceService } from './one-piece.service';
 import { CreateOnePieceDto } from './dto/create-one-piece.dto';
 import { UpdateOnePieceDto } from './dto/update-one-piece.dto';
@@ -17,14 +25,17 @@ export class OnePieceController {
     return this.onePieceService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.onePieceService.findOne(+id);
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.onePieceService.findOne(term);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOnePieceDto: UpdateOnePieceDto) {
-    return this.onePieceService.update(+id, updateOnePieceDto);
+  @Patch(':term')
+  update(
+    @Param('term') term: string,
+    @Body() updateOnePieceDto: UpdateOnePieceDto,
+  ) {
+    return this.onePieceService.update(term, updateOnePieceDto);
   }
 
   @Delete(':id')

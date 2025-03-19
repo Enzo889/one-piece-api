@@ -3,10 +3,11 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateOnePieceDto } from './dto/create-one-piece.dto';
 import { UpdateOnePieceDto } from './dto/update-one-piece.dto';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { OnePiece } from './entities/one-piece.entity';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -41,12 +42,43 @@ export class OnePieceService {
     return `This action returns all onePiece`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} onePiece`;
+  async findOne(term: string) {
+    let onepiececharacter: OnePiece | null = null;
+
+    if (!isNaN(+term)) {
+      onepiececharacter = (await this.OnepieceModel.findOne({ no: term }))!;
+    }
+
+    //mongoid
+
+    if (!onepiececharacter && isValidObjectId(term)) {
+      onepiececharacter = await this.OnepieceModel.findById(term);
+    }
+
+    //name
+
+    if (!onepiececharacter) {
+      onepiececharacter = await this.OnepieceModel.findOne({
+        name: term.toLowerCase().trim(),
+      });
+    }
+
+    if (!onepiececharacter)
+      throw new NotFoundException(
+        `Character with id, name or no: ${term} not found`,
+      );
+
+    return onepiececharacter;
   }
 
-  update(id: number, updateOnePieceDto: UpdateOnePieceDto) {
-    return `This action updates a #${id} onePiece`;
+  async update(term: string, updateOnePieceDto: UpdateOnePieceDto) {
+    const onepiececharacter = await this.findOne(term);
+    if (updateOnePieceDto.name)
+      updateOnePieceDto.name = updateOnePieceDto.name.toLowerCase();
+
+    await onepiececharacter?.updateOne(updateOnePieceDto);
+
+    return { ...onepiececharacter?.toJSON(), ...updateOnePieceDto };
   }
 
   remove(id: number) {
