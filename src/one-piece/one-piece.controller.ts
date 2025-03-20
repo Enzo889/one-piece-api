@@ -40,6 +40,6 @@ export class OnePieceController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.onePieceService.remove(+id);
+    return this.onePieceService.remove(id);
   }
 }

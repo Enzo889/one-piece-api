@@ -25,16 +25,7 @@ export class OnePieceService {
       const onepiece = await this.OnepieceModel.create(createOnePieceDto);
       return onepiece;
     } catch (error) {
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `already exists in DB ${JSON.stringify(error.keyValue)}`,
-        );
-      } else {
-        console.log(error);
-        throw new InternalServerErrorException(
-          'Cannot create OnePiece character in db',
-        );
-      }
+      this.HandleException(error);
     }
   }
 
@@ -76,12 +67,30 @@ export class OnePieceService {
     if (updateOnePieceDto.name)
       updateOnePieceDto.name = updateOnePieceDto.name.toLowerCase();
 
-    await onepiececharacter?.updateOne(updateOnePieceDto);
+    try {
+      await onepiececharacter?.updateOne(updateOnePieceDto);
 
-    return { ...onepiececharacter?.toJSON(), ...updateOnePieceDto };
+      return { ...onepiececharacter?.toJSON(), ...updateOnePieceDto };
+    } catch (error) {
+      this.HandleException(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} onePiece`;
+  async remove(id: string) {
+    const onepiececharacter = await this.findOne(id);
+    await onepiececharacter.deleteOne();
+  }
+
+  private HandleException(error: any) {
+    if (error.code === 11000) {
+      throw new BadRequestException(
+        `already exists in DB ${JSON.stringify(error.keyValue)}`,
+      );
+    } else {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Cannot create OnePiece character in db',
+      );
+    }
   }
 }
