@@ -77,8 +77,14 @@ export class OnePieceService {
   }
 
   async remove(id: string) {
-    const onepiececharacter = await this.findOne(id);
-    await onepiececharacter.deleteOne();
+    // const onepiececharacter = await this.findOne(id);
+
+    const { deletedCount } = await this.OnepieceModel.deleteOne({ _id: id });
+
+    if (deletedCount === 0) {
+      throw new NotFoundException(`Character with id: ${id} not found`);
+    }
+    return;
   }
 
   private HandleException(error: any) {

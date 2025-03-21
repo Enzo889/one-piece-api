@@ -10,6 +10,7 @@ import {
 import { OnePieceService } from './one-piece.service';
 import { CreateOnePieceDto } from './dto/create-one-piece.dto';
 import { UpdateOnePieceDto } from './dto/update-one-piece.dto';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
 @Controller('one-piece')
 export class OnePieceController {
@@ -39,7 +40,7 @@ export class OnePieceController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
     return this.onePieceService.remove(id);
   }
 }
