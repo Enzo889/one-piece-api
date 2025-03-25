@@ -10,10 +10,11 @@ export class SeedService {
       'https://api.api-onepiece.com/v2/characters/en',
     );
 
-    data.forEach(({ name, id }) => {
-      console.log(`Name: ${name} ID: ${id}`);
-    });
+    const characters = data.slice(0, 10).map(({ name, id }) => ({
+      name,
+      id,
+    }));
 
-    return data[0].name;
+    return characters;
   }
 }
