@@ -87,6 +87,15 @@ export class OnePieceService {
     return;
   }
 
+  async seed(characters: CreateOnePieceDto) {
+    try {
+      const character = await this.OnepieceModel.create(characters);
+      return character;
+    } catch (error) {
+      this.HandleException(error);
+    }
+  }
+
   private HandleException(error: any) {
     if (error.code === 11000) {
       throw new BadRequestException(

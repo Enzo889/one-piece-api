@@ -7,6 +7,7 @@ import { OnePiece, OnePieceSchema } from './entities/one-piece.entity';
 @Module({
   controllers: [OnePieceController],
   providers: [OnePieceService],
+  exports: [MongooseModule],
   imports: [
     MongooseModule.forFeature([
       {
