@@ -10,6 +10,7 @@ import { UpdateOnePieceDto } from './dto/update-one-piece.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { OnePiece } from './entities/one-piece.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { paginatinoDto } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class OnePieceService {
@@ -29,8 +30,9 @@ export class OnePieceService {
     }
   }
 
-  findAll() {
-    return `This action returns all onePiece`;
+  findAll(paginatinoDto: paginatinoDto) {
+    const { limit = 10, offset = 5 } = paginatinoDto;
+    return this.OnepieceModel.find().limit(limit).skip(offset).sort({ no: 1 });
   }
 
   async findOne(term: string) {
