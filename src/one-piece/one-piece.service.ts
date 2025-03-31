@@ -11,12 +11,15 @@ import { isValidObjectId, Model } from 'mongoose';
 import { OnePiece } from './entities/one-piece.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { paginatinoDto } from '../common/dto/pagination.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OnePieceService {
+  private defaultlimit: number;
   constructor(
     @InjectModel(OnePiece.name)
     private readonly OnepieceModel: Model<OnePiece>,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(createOnePieceDto: CreateOnePieceDto) {
@@ -31,7 +34,8 @@ export class OnePieceService {
   }
 
   findAll(paginatinoDto: paginatinoDto) {
-    const { limit = 10, offset = 5 } = paginatinoDto;
+    this.defaultlimit = this.configService.get<number>('limit') || 10;
+    const { limit = this.defaultlimit, offset = 5 } = paginatinoDto;
     return this.OnepieceModel.find().limit(limit).skip(offset).sort({ no: 1 });
   }
 

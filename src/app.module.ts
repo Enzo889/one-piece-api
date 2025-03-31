@@ -17,9 +17,9 @@ import { EnvConfiguration } from './common/config/app.config';
       rootPath: join(__dirname, '..', 'public'),
     }),
 
-    MongooseModule.forRoot(
-      process.env.MONGODB || 'mongodb://localhost:27017/one-piece',
-    ),
+    MongooseModule.forRoot(process.env.MONGODB || '', {
+      dbName: process.env.DB_NAME,
+    }),
 
     OnePieceModule,
 
